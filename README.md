@@ -1,5 +1,5 @@
-# MaatchimAI
-- AI Solutions for Smarter Decisions and the real impact
+# MaatChimAI (pronounced ‘maat-chim-A-I’) — AI wings of insight, fairness, and transformation.
+
 ## Core Idea:
-- Maatchim is a human-centered AI lab and innovation hub.
+- Maatchim started as a human-centered AI lab and innovation hub.
 - It focuses on socio-economic impact, ethical AI, and data-driven solutions.
