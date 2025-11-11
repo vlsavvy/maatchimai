@@ -1,4 +1,5 @@
-# MaatChimAI (pronounced ‘maat-chim-A-I’) — AI wings of insight, fairness, and transformation.
+# MaatChimAI (pronounced ‘maat-chim-A-I’)
+#### AI wings of insight, fairness, and transformation.
 
 ## Core Idea:
 - Maatchim started as a human-centered AI lab and innovation hub.
