@@ -1,40 +1,33 @@
+import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
+
 let engine = null;
 
-let modelLoaded = false;
+export async function initializeModel() {
 
-const MODEL = "Llama-3.2-3B-Instruct-q4f16_1";
-// Later we can easily switch to Gemma or Phi.
+    const modelStatus = document.getElementById("modelStatus");
+    const modelProgress = document.getElementById("modelProgress");
+    const generateBtn = document.getElementById("generateBtn");
 
-async function initializeModel() {
-
-    const status =
-        document.getElementById("modelStatus");
-
-    const progress =
-        document.getElementById("modelProgress");
-
-    const button =
-        document.getElementById("generateBtn");
+    modelStatus.textContent = "Loading AI model...";
 
     try {
 
-        status.textContent = "Loading WebLLM...";
+        engine = await CreateMLCEngine(
 
-        engine = new window.webllm.MLCEngine();
-
-        await engine.reload(
-
-            MODEL,
+            "Llama-3.2-3B-Instruct-q4f16_1-MLC",
 
             {
 
-                initProgressCallback(report) {
+                initProgressCallback(progress) {
 
-                    progress.value =
-                        report.progress * 100;
+                    modelStatus.textContent = progress.text;
 
-                    status.textContent =
-                        report.text;
+                    if(progress.progress){
+
+                        modelProgress.value =
+                            progress.progress * 100;
+
+                    }
 
                 }
 
@@ -42,69 +35,61 @@ async function initializeModel() {
 
         );
 
-        modelLoaded = true;
+        modelStatus.textContent =
+            "✅ Local AI Ready";
 
-        progress.value = 100;
+        modelProgress.value = 100;
 
-        status.textContent =
-            "✅ AI Ready (Running Locally)";
+        generateBtn.disabled = false;
 
-        button.disabled = false;
-
-        button.textContent =
+        generateBtn.textContent =
             "Generate";
 
     }
 
-    catch (err) {
+    catch(err){
 
         console.error(err);
 
-        status.textContent =
-            "❌ Failed to load model";
+        modelStatus.textContent =
+            "❌ Failed to load AI model";
 
     }
 
 }
 
-async function generate(prompt) {
+export async function askLLM(prompt){
 
-    if (!modelLoaded)
-        throw new Error("Model not ready");
+    const reply =
+        await engine.chat.completions.create({
 
-    const reply = await engine.chat.completions.create({
+            messages:[
 
-        messages: [
+                {
 
-            {
+                    role:"system",
 
-                role: "system",
+                    content:
+                    "You are a senior B2B marketing strategist."
 
-                content:
-                    "You are an expert B2B marketing strategist."
+                },
 
-            },
+                {
 
-            {
+                    role:"user",
 
-                role: "user",
+                    content:prompt
 
-                content: prompt
+                }
 
-            }
+            ],
 
-        ],
+            temperature:0.7,
 
-        temperature: 0.7,
+            stream:false
 
-        max_tokens: 1200
-
-    });
+        });
 
     return reply.choices[0].message.content;
 
 }
-
-window.generate = generate;
-
-initializeModel();
