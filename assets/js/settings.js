@@ -1,5 +1,11 @@
 const STORAGE_KEY = "maatchimai_gemini_api_key";
 
+/*
+----------------------------------------
+Local Storage
+----------------------------------------
+*/
+
 export function getApiKey() {
     return localStorage.getItem(STORAGE_KEY);
 }
@@ -12,26 +18,78 @@ export function clearApiKey() {
     localStorage.removeItem(STORAGE_KEY);
 }
 
+/*
+----------------------------------------
+Modal
+----------------------------------------
+*/
+
 export async function ensureApiKey() {
 
-    let key = getApiKey();
+    // Already saved?
+    const existingKey = getApiKey();
 
-    if (key) {
-        return key;
+    if (existingKey) {
+        return existingKey;
     }
 
-    key = window.prompt(
-`Enter your Google Gemini API Key.
+    // Show modal
+    return new Promise((resolve, reject) => {
 
-It will be stored only in this browser and is never uploaded to GitHub.
+        const modal = document.getElementById("apiModal");
+        const input = document.getElementById("apiKeyInput");
+        const saveBtn = document.getElementById("saveApiBtn");
+        const cancelBtn = document.getElementById("cancelApiBtn");
 
-You can remove it anytime from Settings.`);
+        input.value = "";
 
-    if (!key || key.trim() === "") {
-        throw new Error("Gemini API key not provided.");
-    }
+        modal.style.display = "flex";
 
-    saveApiKey(key);
+        input.focus();
 
-    return key.trim();
+        function cleanup() {
+
+            saveBtn.removeEventListener("click", onSave);
+            cancelBtn.removeEventListener("click", onCancel);
+
+        }
+
+        function onSave() {
+
+            const key = input.value.trim();
+
+            if (!key) {
+
+                alert("Please enter your Gemini API Key.");
+
+                return;
+
+            }
+
+            saveApiKey(key);
+
+            modal.style.display = "none";
+
+            cleanup();
+
+            resolve(key);
+
+        }
+
+        function onCancel() {
+
+            modal.style.display = "none";
+
+            cleanup();
+
+            reject(new Error("API key not provided."));
+
+        }
+
+        saveBtn.addEventListener("click", onSave);
+
+        cancelBtn.addEventListener("click", onCancel);
+
+    });
+
 }
