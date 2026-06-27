@@ -1,6 +1,10 @@
-import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
+// assets/js/webllm.js
 
-let engine = null;
+import { ensureApiKey } from "./settings.js";
+
+const MODEL = "gemini-2.5-flash";
+
+let initialized = false;
 
 export async function initializeModel() {
 
@@ -8,88 +12,70 @@ export async function initializeModel() {
     const modelProgress = document.getElementById("modelProgress");
     const generateBtn = document.getElementById("generateBtn");
 
-    modelStatus.textContent = "Loading AI model...";
-
     try {
 
-        engine = await CreateMLCEngine(
+        await ensureApiKey();
 
-            "Llama-3.2-3B-Instruct-q4f16_1-MLC",
+        initialized = true;
 
-            {
+        modelStatus.textContent = "✅ Gemini Connected";
 
-                initProgressCallback(progress) {
+        if (modelProgress) {
+            modelProgress.value = 100;
+        }
 
-                    modelStatus.textContent = progress.text;
+        if (generateBtn) {
+            generateBtn.disabled = false;
+            generateBtn.textContent = "Generate";
+        }
 
-                    if(progress.progress){
-
-                        modelProgress.value =
-                            progress.progress * 100;
-
-                    }
-
-                }
-
-            }
-
-        );
-
-        modelStatus.textContent =
-            "✅ Local AI Ready";
-
-        modelProgress.value = 100;
-
-        generateBtn.disabled = false;
-
-        generateBtn.textContent =
-            "Generate";
-
-    }
-
-    catch(err){
+    } catch (err) {
 
         console.error(err);
 
-        modelStatus.textContent =
-            "❌ Failed to load AI model";
+        modelStatus.textContent = "⚠ Gemini API Key Required";
 
     }
 
 }
 
-export async function askLLM(prompt){
+export async function askLLM(prompt) {
 
-    const reply =
-        await engine.chat.completions.create({
+    if (!initialized) {
+        await initializeModel();
+    }
 
-            messages:[
+    const apiKey = await ensureApiKey();
 
-                {
+    const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                contents: [
+                    {
+                        parts: [
+                            {
+                                text:
+`You are a senior B2B marketing strategist.
 
-                    role:"system",
+${prompt}`
+                            }
+                        ]
+                    }
+                ]
+            })
+        }
+    );
 
-                    content:
-                    "You are a senior B2B marketing strategist."
+    if (!response.ok) {
+        throw new Error(await response.text());
+    }
 
-                },
+    const json = await response.json();
 
-                {
-
-                    role:"user",
-
-                    content:prompt
-
-                }
-
-            ],
-
-            temperature:0.7,
-
-            stream:false
-
-        });
-
-    return reply.choices[0].message.content;
-
+    return json.candidates[0].content.parts[0].text;
 }
