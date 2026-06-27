@@ -370,18 +370,54 @@ Waiting...
 
 
 <script type="module" src="assets/js/webllm.js"></script>
-
-<script type="module" src="assets/js/prompts.js"></script>
-
-<script type="module" src="assets/js/website-to-leads.js"></script>
-<script type="module">
-    import * as webllm from "https://esm.run/@mlc-ai/web-llm";
-    window.webllm = webllm;
-</script>
-
-<script type="module" src="assets/js/webllm.js"></script>
-<script type="module" src="assets/js/prompts.js"></script>
 <script type="module" src="assets/js/website-to-leads.js"></script>
 
+<div id="apiModal" class="modal-overlay">
+
+    <div class="modal">
+
+        <h2>Connect Gemini AI</h2>
+
+        <p>
+
+            Enter your Google Gemini API key.
+
+            <br><br>
+
+            It will be stored only in this browser.
+
+            It is never uploaded to GitHub or shared with Maatchimai.
+
+        </p>
+
+        <input
+            id="apiKeyInput"
+            type="password"
+            placeholder="AIzaSy..."
+        />
+
+        <div class="modal-buttons">
+
+            <button
+                id="cancelApiBtn"
+                class="cancelBtn">
+
+                Cancel
+
+            </button>
+
+            <button
+                id="saveApiBtn"
+                class="saveBtn">
+
+                Save & Generate
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 </body>
 </html>
