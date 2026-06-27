@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maatchimai | Website to Leads</title>
+  <style>
+    :root{
+      --bg:#0b1020; --card:#111827; --text:#e5e7eb; --muted:#9ca3af;
+      --accent:#38bdf8; --border:#243244; --input:#0f172a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:Arial,sans-serif; background:linear-gradient(180deg,#07111f,#111827);
+      color:var(--text); line-height:1.5;
+    }
+    .container{max-width:1180px; margin:0 auto; padding:32px 20px 60px}
+    .topbar{
+      display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:18px;
+    }
+    .topbar a{color:var(--accent); text-decoration:none}
+    .header{margin-bottom:24px}
+    .header h1{margin:0 0 8px; font-size:2rem}
+    .header p{margin:0; color:var(--muted); max-width:920px}
+    .grid{display:grid; grid-template-columns:1fr; gap:20px}
+    @media(min-width:980px){ .grid{grid-template-columns:440px 1fr} }
+    .card{
+      background:rgba(17,24,39,.92); border:1px solid var(--border); border-radius:16px;
+      padding:20px; box-shadow:0 10px 30px rgba(0,0,0,.2);
+    }
+    .section-title{margin:0 0 14px; font-size:1.08rem}
+    label{display:block; margin:14px 0 6px; font-weight:600; font-size:.95rem}
+    input, textarea, select{
+      width:100%; background:var(--input); color:var(--text); border:1px solid var(--border);
+      border-radius:10px; padding:12px 14px; font-size:1rem;
+    }
+    textarea{min-height:110px; resize:vertical}
+    input[type="file"]{padding:10px}
+    .checks{display:grid; gap:10px; margin-top:8px}
+    .check{
+      display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--border);
+      border-radius:10px; background:#0b1220;
+    }
+    .check input{width:auto}
+    .actions{display:flex; gap:12px; margin-top:18px; flex-wrap:wrap}
+    button{
+      border:0; border-radius:10px; padding:12px 16px; font-weight:700; cursor:pointer;
+    }
+    .primary{background:var(--accent); color:#00111a}
+    .secondary{background:transparent; border:1px solid var(--border); color:var(--text)}
+    .output-box{
+      border:1px solid var(--border); background:#0b1220; border-radius:14px; padding:16px; margin-bottom:16px;
+    }
+    .output-box h3{margin:0 0 10px; font-size:1rem}
+    .output-box pre{
+      white-space:pre-wrap; margin:0; color:var(--text); font-family:inherit; word-break:break-word;
+    }
+    .muted{color:var(--muted)}
+    .note{font-size:.92rem; color:var(--muted); margin-top:8px}
+    .pillrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    .pill{
+      display:inline-block; padding:6px 10px; border:1px solid var(--border); border-radius:999px;
+      background:#0b1220; color:var(--muted); font-size:.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <a href="index.html">← Back to Maatchimai</a>
+      <span class="muted">Website → leads + platform content</span>
+    </div>
+
+    <div class="header">
+      <h1>Website to Leads</h1>
+      <p>Paste a website URL, optionally upload LinkedIn assets or a YouTube MP4, and generate lead-ready copy. The LLM always handles text generation; uploads only act as source assets for the workflow.</p>
+      <div class="pillrow">
+        <span class="pill">LinkedIn image</span>
+        <span class="pill">LinkedIn PDF</span>
+        <span class="pill">YouTube MP4</span>
+        <span class="pill">Twitter short link</span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2 class="section-title">Create outputs</h2>
+
+        <form id="toolForm">
+          <label for="siteUrl">Website URL</label>
+          <input id="siteUrl" type="url" placeholder="https://example.com" required />
+
+          <label for="brand">Brand / Company</label>
+          <input id="brand" type="text" placeholder="Maatchimai" required />
+
+          <label for="audience">Target audience</label>
+          <input id="audience" type="text" placeholder="Founders, marketers, sales teams" required />
+
+          <label for="tone">Tone</label>
+          <select id="tone" required>
+            <option value="professional">Professional</option>
+            <option value="friendly">Friendly</option>
+            <option value="bold">Bold</option>
+            <option value="thought-leadership">Thought leadership</option>
+          </select>
+
+          <label for="keywords">Keywords</label>
+          <input id="keywords" type="text" placeholder="AI, automation, lead generation" />
+
+          <label for="imageUpload">Upload image for LinkedIn</label>
+          <input id="imageUpload" type="file" accept="image/*" />
+
+          <label for="pdfUpload">Upload PDF for LinkedIn</label>
+          <input id="pdfUpload" type="file" accept=".pdf,application/pdf" />
+
+          <label for="mp4Upload">Upload MP4 for YouTube</label>
+          <input id="mp4Upload" type="file" accept="video/mp4,.mp4" />
+          <div class="note">Use the MP4 as the source asset. The LLM will still generate title, description, script prompt, and tags.</div>
+
+          <label>Platforms</label>
+          <div class="checks">
+            <div class="check"><input type="checkbox" id="linkedin" checked /><label for="linkedin">LinkedIn</label></div>
+            <div class="check"><input type="checkbox" id="youtube" checked /><label for="youtube">YouTube</label></div>
+            <div class="check"><input type="checkbox" id="twitter" checked /><label for="twitter">Twitter/X</label></div>
+          </div>
+
+          <label for="twitterUrl">Twitter link to shorten</label>
+          <input id="twitterUrl" type="url" placeholder="https://yourwebsite.com/landing-page" />
+
+          <div class="actions">
+            <button type="submit" class="primary">Generate</button>
+            <button type="reset" class="secondary">Clear</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Outputs</h2>
+
+        <div class="output-box">
+          <h3>Lead Summary</h3>
+          <pre id="outLead" class="muted">Lead summary will appear here.</pre>
+        </div>
+
+        <div class="output-box">
+          <h3>LinkedIn</h3>
+          <pre id="outLinkedin" class="muted">LinkedIn post will appear here.</pre>
+        </div>
+
+        <div class="output-box">
+          <h3>YouTube</h3>
+          <pre id="outYoutube" class="muted">YouTube title, description, script prompt, and tags will appear here.</pre>
+        </div>
+
+        <div class="output-box">
+          <h3>Twitter/X</h3>
+          <pre id="outTwitter" class="muted">Twitter/X post will appear here.</pre>
+        </div>
+
+        <div class="output-box">
+          <h3>Short URL</h3>
+          <pre id="outShortUrl" class="muted">Shortened URL will appear here.</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('toolForm');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const brand = document.getElementById('brand').value.trim();
+      const siteUrl = document.getElementById('siteUrl').value.trim();
+      const audience = document.getElementById('audience').value.trim();
+      const tone = document.getElementById('tone').value;
+      const keywords = document.getElementById('keywords').value.trim();
+      const twitterUrl = document.getElementById('twitterUrl').value.trim();
+
+      const imageFile = document.getElementById('imageUpload').files[0];
+      const pdfFile = document.getElementById('pdfUpload').files[0];
+      const mp4File = document.getElementById('mp4Upload').files[0];
+
+      const assets = [
+        imageFile ? `image: ${imageFile.name}` : 'image: none',
+        pdfFile ? `pdf: ${pdfFile.name}` : 'pdf: none',
+        mp4File ? `mp4: ${mp4File.name}` : 'mp4: none'
+      ].join(', ');
+
+      const leadSummary =
+`Website: ${siteUrl}
+Brand: ${brand}
+Audience: ${audience}
+Tone: ${tone}
+Keywords: ${keywords || 'none'}
+Assets: ${assets}
+
+LLM task:
+- Summarize the website.
+- Extract pain points.
+- Infer ICP.
+- Generate outreach angles.
+- Produce lead-ready text.`;
+
+      const linkedinText =
+`LLM-generated LinkedIn post for ${brand}
+Source: ${siteUrl}
+Audience: ${audience}
+Tone: ${tone}
+Keywords: ${keywords || 'none'}
+Use uploaded image or PDF if present.
+Generate: hook, body, CTA, hashtags.`;
+
+      const youtubeText = mp4File
+        ? `LLM-generated YouTube package for ${brand}
+Source MP4: ${mp4File.name}
+Generate: title, description, script prompt, chapter idea, tags, and CTA.`
+        : `Upload an MP4 to generate the YouTube package.`;
+
+      const twitterText =
+`LLM-generated Twitter/X post for ${brand}
+Source: ${siteUrl}
+Tone: ${tone}
+${twitterUrl ? 'Shorten this URL: ' + twitterUrl : 'No URL provided.'}`;
+
+      const shortUrlText = twitterUrl
+        ? `Short URL placeholder for: ${twitterUrl}`
+        : 'Add a URL to generate a shortened link.';
+
+      document.getElementById('outLead').textContent = leadSummary;
+      document.getElementById('outLinkedin').textContent = document.getElementById('linkedin').checked ? linkedinText : 'LinkedIn output disabled.';
+      document.getElementById('outYoutube').textContent = document.getElementById('youtube').checked ? youtubeText : 'YouTube output disabled.';
+      document.getElementById('outTwitter').textContent = document.getElementById('twitter').checked ? twitterText : 'Twitter/X output disabled.';
+      document.getElementById('outShortUrl').textContent = shortUrlText;
+    });
+  </script>
+</body>
+</html>
